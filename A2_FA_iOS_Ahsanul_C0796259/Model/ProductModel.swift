@@ -7,3 +7,21 @@
 //
 
 import Foundation
+class ProductModel
+{
+    internal init(id: Int, name: String, desc: String, price: Double, provider: String) {
+        self.id = id
+        self.name = name
+        self.desc = desc
+        self.price = price
+        self.provider = provider
+    }
+    
+    var id: Int
+    var name: String
+    var desc: String
+    var price: Double
+    var provider: String
+    
+    
+}
