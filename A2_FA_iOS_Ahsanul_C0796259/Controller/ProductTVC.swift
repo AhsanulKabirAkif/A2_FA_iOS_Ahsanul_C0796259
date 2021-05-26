@@ -15,10 +15,7 @@ class ProductTVC: UITableViewController {
     
    var products = [Product]()
     
-   
-    
-    
-    
+
     // create the context
      let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
      
@@ -30,113 +27,19 @@ class ProductTVC: UITableViewController {
         super.viewDidLoad()
         self.navigationController?.isToolbarHidden = false
         
-        
-       
-        let newProduct = Product(context: self.context)
-        newProduct.id = 1
-        newProduct.name = "Lenovo"
-        newProduct.desc = "Laptop"
-        newProduct.price = 250
-        newProduct.provider = "Lenovo"
-        self.products.append(newProduct)
-        self.saveProducts()
-     
-        let newProduct2 = Product(context: self.context)
-        newProduct2.id = 2
-        newProduct2.name = "Xbox"
-        newProduct2.desc = "Console"
-        newProduct2.price = 300
-        newProduct2.provider = "Microsoft"
-        self.products.append(newProduct2)
-        self.saveProducts()
-        
-        let newProduct3 = Product(context: self.context)
-        newProduct3.id = 3
-        newProduct3.name = "Mouse"
-        newProduct3.desc = "Small mouse"
-        newProduct3.price = 50
-        newProduct3.provider = "Gigabyte"
-        self.products.append(newProduct3)
-        self.saveProducts()
-        
-        let newProduct4 = Product(context: self.context)
-        newProduct4.id = 4
-        newProduct4.name = "Keyboard"
-        newProduct4.desc = "Small keyboard"
-        newProduct4.price = 50
-        newProduct4.provider = "Gigabyte"
-        self.products.append(newProduct4)
-        self.saveProducts()
-        
-        let newProduct5 = Product(context: self.context)
-        newProduct5.id = 5
-        newProduct5.name = "Xiaomi note 4x"
-        newProduct5.desc = "mobile"
-        newProduct5.price = 250
-        newProduct5.provider = "Xiaomi"
-        self.products.append(newProduct5)
-        self.saveProducts()
-        
-        let newProduct6 = Product(context: self.context)
-        newProduct6.id = 6
-        newProduct6.name = "Xiaomi note 7 pro"
-        newProduct6.desc = "mobile"
-        newProduct6.price = 350
-        newProduct6.provider = "Xiaomi"
-        self.products.append(newProduct6)
-        self.saveProducts()
-        
-        let newProduct7 = Product(context: self.context)
-        newProduct7.id = 7
-        newProduct7.name = "Body Lotion"
-        newProduct7.desc = "Lotion"
-        newProduct7.price = 35
-        newProduct7.provider = "Activ"
-        self.products.append(newProduct7)
-        self.saveProducts()
-        
-        let newProduct8 = Product(context: self.context)
-        newProduct8.id = 8
-        newProduct8.name = "Iphone 12"
-        newProduct8.desc = "Mobile"
-        newProduct8.price = 35
-        newProduct8.provider = "Apple"
-        self.products.append(newProduct8)
-        self.saveProducts()
-        
-        let newProduct9 = Product(context: self.context)
-        newProduct9.id = 9
-        newProduct9.name = "KZ Zs3"
-        newProduct9.desc = "Headphone"
-        newProduct9.price = 74
-        newProduct9.provider = "Mi"
-        self.products.append(newProduct9)
-        self.saveProducts()
-        
-        let newProduct10 = Product(context: self.context)
-        newProduct10.id = 10
-        newProduct10.name = "Mi pro"
-        newProduct10.desc = "Headphone"
-        newProduct10.price = 73
-        newProduct10.provider = "Mi"
-        self.products.append(newProduct10)
-        self.saveProducts()
-        
-        
+//        if someEntityExists() == false {
+//            saveStaticProducts()
+//        } else {
+//            deleteAllRecords()
+//            saveStaticProducts()
+//        }
+      
        showSearchBar()
-//
-//      let delegate = UIApplication.shared.delegate as! AppDelegate
-//      let context = delegate.persistentContainer.viewContext
+       loadProducts()
 
-     
-       
-//        loadProducts()
+            
+       searchController.isActive = true
     
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
     
 
@@ -161,9 +64,15 @@ class ProductTVC: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "productCell", for: indexPath)
          let product = products[indexPath.row]
         // Configure the cell...
-        cell.textLabel?.text = product.name
-        cell.detailTextLabel?.text = product.provider
-    
+       cell.textLabel?.text = "\(product.id)" + "." + product.name! + " - " + "$\(product.price)"
+        cell.detailTextLabel?.text = product.provider!  + " - " + product.desc!
+        
+        
+        
+        let backgroundView = UIView()
+        backgroundView.backgroundColor = .lightGray
+        cell.selectedBackgroundView = backgroundView
+        
         return cell
     }
 
@@ -193,17 +102,40 @@ class ProductTVC: UITableViewController {
                // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
            }
        }
-       
     
-    func showSearchBar() {
-           searchController.searchBar.delegate = self
-           searchController.obscuresBackgroundDuringPresentation = false
-           searchController.searchBar.placeholder = "Search Product"
-           navigationItem.searchController = searchController
-           definesPresentationContext = true
-           searchController.searchBar.searchTextField.textColor = .lightGray
-       }
     
+        
+        // MARK: - Navigation
+
+    //   In a storyboard-based application, you will often want to do a little preparation before navigation
+override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+        if let destination = segue.destination as? ProductVC {
+                  destination.delegate = self
+                  
+                  if let cell = sender as? UITableViewCell {
+                      if let index = tableView.indexPath(for: cell)?.row {
+                          destination.selectedProduct = products[index]
+                      }
+                  }
+              }
+
+     }
+
+    func updateProduct(with name: String, id: Int, desc: String, price: Int, provider:String) {
+             products = []
+             let newProduct = Product(context: context)
+             newProduct.name = name
+             newProduct.id = Int16(id)
+             newProduct.desc = desc
+             newProduct.price = Double(price)
+             newProduct.provider = provider
+
+             saveProducts()
+             loadProducts()
+         }
+
+   
     
     func saveProducts(){
         do {
@@ -220,7 +152,6 @@ class ProductTVC: UITableViewController {
          }
 
     
- /// load folder from core data
   func loadProducts(predicate: NSPredicate? = nil) {
       let request: NSFetchRequest<Product> = Product.fetchRequest()
       request.predicate = predicate
@@ -233,22 +164,16 @@ class ProductTVC: UITableViewController {
       tableView.reloadData()
   }
   
-    func deleteAllRecords(){
-        let deleteFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "Product")
-             let deleteRequest = NSBatchDeleteRequest(fetchRequest: deleteFetch)
-
-             do {
-                 try context.execute(deleteRequest)
-                 try context.save()
-             } catch {
-                 print ("There was an error")
-             }
-    }
+ 
     
-   
-    
-    
-    
+    func showSearchBar() {
+           searchController.searchBar.delegate = self
+           searchController.obscuresBackgroundDuringPresentation = false
+           searchController.searchBar.placeholder = "Search Product"
+           navigationItem.searchController = searchController
+           definesPresentationContext = true
+           searchController.searchBar.searchTextField.textColor = .lightGray
+       }
 
 }
  
@@ -256,20 +181,13 @@ class ProductTVC: UITableViewController {
 //MARK: - search bar delegate methods
 extension ProductTVC: UISearchBarDelegate {
     
-    
-    /// search button on keypad functionality
-    /// - Parameter searchBar: search bar is passed to this function
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         // add predicate
-        let predicate = NSPredicate(format: "name == %@", searchBar.text!)
+        let predicate = NSPredicate(format: "name CONTAINS[cd] %@", searchBar.text!)
         loadProducts(predicate : predicate)
     }
     
-    
-    /// when the text in text bar is changed
-    /// - Parameters:
-    ///   - searchBar: search bar is passed to this function
-    ///   - searchText: the text that is written in the search bar
+
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchBar.text?.count == 0 {
             loadProducts()

@@ -33,37 +33,20 @@ class ProductVC: UIViewController {
             super.viewDidLoad()
 
             
-            productName.text = selectedProduct?.name
-            // Do any additional setup after loading the view.
+
+
         }
         
 
-        
-    //    // MARK: - Navigation
-    //
-    //    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    //    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-    //        // Get the new view controller using segue.destination.
-    //        // Pass the selected object to the new view controller.
-    //
-    //
-    //       let productListTableVC = segue.destination as? ProductTVC
-    //        productListTableVC.
-    //
-    //
-    //    }
-        
-        
         override func viewWillDisappear(_ animated: Bool) {
             
             
-    //           if editMode {
-    //               delegate!.deleteProduct(product: selectedProduct!)
-    //           }
-    //
-    //        guard productName.text != "" else {return}
-    //        delegate!.updateProduct(with: productName.text!)
-
+               if editMode {
+                  delegate!.deleteProduct(product: selectedProduct!)
+              }
+            guard productName.text != "" else {return}
+            delegate!.updateProduct(with: productName.text!, id: Int(productID.text!)!, desc: productDesc.text!, price: Int(productPrice.text!)!, provider: productProvider.text! )
+        
             
             
             
